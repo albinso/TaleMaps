@@ -12,7 +12,12 @@ class ZoneMap:
         self.load_map()
         self.prev_point = None
         self.previd = None
-        self.dotsize = dotsize
+        self.dotsize = dotsize*self.img.width
+        self.iconPath = "icons/tauren.png"
+        self.load_icon()
+    
+    def load_icon(self):
+        self.icon = Image.open(self.iconPath)
 
     def get_map_name(self):
         return mapIDs[self.zoneid]
@@ -28,7 +33,7 @@ class ZoneMap:
         self.imgdraw = ImageDraw.ImageDraw(self.img)
 
     def construct_ellipse(self, ax, ay, scale=1):
-        dot = self.dotsize*self.img.width * math.sqrt(scale)
+        dot = self.dotsize*math.sqrt(scale)
         x0 = ax - dot
         y0 = ay - dot
         x1 = ax + dot
@@ -38,12 +43,17 @@ class ZoneMap:
     def get_params_by_event(self, event):
         return mapicons[event]
 
+    def drawCow(self, img, pos):
+        ic = self.icon.resize((int(self.dotsize*9), int(self.dotsize*6)))
+        pos = int(pos[0] - ic.width/2), int(pos[1] - ic.height/2)
+        img.paste(ic, pos, mask=ic) 
+
     def add_text(self, entry, text):
         ax = entry.pos[0] * self.img.width
         ay = entry.pos[1] * self.img.height
         font = ImageFont.truetype("/usr/share/fonts/TTF/VeraMoBd.ttf", 14)
         fill, scale = self.get_params_by_event(entry.ID)
-        dot = dotsize*self.img.width * math.sqrt(scale)
+        dot = self.dotsize*math.sqrt(scale)
         self.imgdraw.text((ax+dot/2, ay+dot/2), text, fill=(0, 0, 0), font=font)
 
     def add_point(self, entry, draw_line=True):

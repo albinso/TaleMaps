@@ -34,26 +34,22 @@ def makemap(log, suffix=""):
     prevzone = 0
     i = -1
     zones = {}
+    last = len(log)-1
+    revlog = reversed(log)
     for j, entry in enumerate(log):
         if prevzone != entry.mapID:
             i = -1
         i += 1
-        if entry.ID > 200 or i % std_resolution != 0:
-            continue
         if not entry.mapID in zones.keys():
             zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix)
-        zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone)
-        prevzone = entry.mapID
-    for entry in log:
-        break
-        if entry.ID < 200:
-            continue
-        zones[entry.mapID].add_point(entry, draw_line=False)
-    for entry in log:
-        break
+        
+        last_point = next((i for i in reversed(log) if i.mapID == entry.mapID))
+        last_frame = last_point.timestamp==entry.timestamp
+        zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone, last_frame=last_frame)
         if entry.ID == 301:
             text = str(entry.level)
             zones[entry.mapID].add_text(entry, text)
+        prevzone = entry.mapID
     for zone in zones.values():
         zone.save()
 
