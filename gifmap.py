@@ -9,6 +9,7 @@ class GifMap(ZoneMap):
         self.framerate = framerate
         self.frames = []
         self.suffix = suffix
+        self.lasttimestamp = None
         super(GifMap, self).__init__(mapID) 
 
     
@@ -26,7 +27,20 @@ class GifMap(ZoneMap):
         frameDraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=(0, 0, 255))
         if not last_frame:
             ZoneMap.drawCow(self, frame, (int(ax), int(ay)))
-        self.frames.append(frame)
+        
+        if not self.lasttimestamp:
+            self.lasttimestamp = entry.timestamp
+            self.frames.append(frame)
+            return
+        if entry.timestamp - self.lasttimestamp > 120:
+            self.lasttimestamp = entry.timestamp
+            self.frames.append(frame)
+            return
+        for i in range(entry.timestamp-self.lasttimestamp):
+            self.frames.append(frame) 
+        
+        self.lasttimestamp = entry.timestamp
+
 
     def get_file_name(self):
         if self.suffix and int(self.suffix) > 0:
