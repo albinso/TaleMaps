@@ -13,8 +13,6 @@ class GifMap(ZoneMap):
         super(GifMap, self).__init__(mapID) 
 
     
-
-    
     def add_point(self, entry, draw_line=False, last_frame=False):
         frame = self.img.copy()
         ax = entry.pos[0] * self.img.width
@@ -26,7 +24,7 @@ class GifMap(ZoneMap):
         fill, scale = self.get_params_by_event(entry.ID)
         frameDraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=(0, 0, 255))
         if not last_frame:
-            ZoneMap.drawCow(self, frame, (int(ax), int(ay)))
+            ZoneMap.drawCow(self, frame, (int(ax), int(ay)), entry.ID == 103)
         
         if not self.lasttimestamp:
             self.lasttimestamp = entry.timestamp

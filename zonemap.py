@@ -17,7 +17,7 @@ class ZoneMap:
         self.load_icon()
     
     def load_icon(self):
-        self.icon = Image.open(self.iconPath)
+        self.icon = (Image.open(self.iconPath), Image.open("icons/ghostcow.png"))
 
     def get_map_name(self):
         return mapIDs[self.zoneid]
@@ -43,8 +43,11 @@ class ZoneMap:
     def get_params_by_event(self, event):
         return mapicons[event]
 
-    def drawCow(self, img, pos):
-        ic = self.icon.resize((int(self.dotsize*9), int(self.dotsize*6)))
+    def drawCow(self, img, pos, ghost):
+        icon = self.icon[0]
+        if ghost:
+            icon = self.icon[1]
+        ic = icon.resize((int(self.dotsize*9), int(self.dotsize*6)))
         pos = int(pos[0] - ic.width/2), int(pos[1] - ic.height/2)
         img.paste(ic, pos, mask=ic) 
 
