@@ -29,7 +29,7 @@ def formatLog(log):
         out.append(entry)
     return out
 
-def makemap(log, suffix=""):
+def makemap(log, suffix="", gif=False, lines=False):
     std_resolution = 1
     prevzone = 0
     i = -1
@@ -41,11 +41,17 @@ def makemap(log, suffix=""):
             i = -1
         i += 1
         if not entry.mapID in zones.keys():
-            zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix)
+            if gif:
+                zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix)
+            else:
+                zones[entry.mapID] = ZoneMap(entry.mapID)
         
         last_point = next((i for i in reversed(log) if i.mapID == entry.mapID))
         last_frame = last_point.timestamp==entry.timestamp
-        zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone, last_frame=last_frame)
+        if gif:
+            zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone, last_frame=last_frame)
+        else:
+            zones[entry.mapID].add_point(entry, draw_line=(entry.mapID == prevzone and lines))
         if entry.ID == 301:
             text = str(entry.level)
             zones[entry.mapID].add_text(entry, text)
@@ -60,7 +66,11 @@ def main():
 
     batch = (int(sys.argv[2]), int(sys.argv[3]))
     log = [StdEntry(e) for e in stringlog[batch[0]:batch[1]]]
-    makemap(log, suffix=sys.argv[4]) 
+    if len(sys.argv) > 5 and sys.argv[5] == 'gif':
+        makemap(log, suffix=sys.argv[4], gif=True) 
+    else:
+        lines = len(sys.argv) > 5 and sys.argv[5] == 'lines'
+        makemap(log, suffix=sys.argv[4], gif=False, lines=lines) 
     
     
 

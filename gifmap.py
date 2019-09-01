@@ -5,7 +5,7 @@ import os
 
 class GifMap(ZoneMap):
    
-    def __init__(self, mapID, framerate=5, suffix=None):
+    def __init__(self, mapID, framerate=50, suffix=None):
         self.framerate = framerate
         self.frames = []
         self.suffix = suffix
@@ -26,16 +26,8 @@ class GifMap(ZoneMap):
         if not last_frame:
             ZoneMap.drawCow(self, frame, (int(ax), int(ay)), entry.ID == 103)
         
-        if not self.lasttimestamp:
-            self.lasttimestamp = entry.timestamp
-            self.frames.append(frame)
-            return
-        if entry.timestamp - self.lasttimestamp > 120:
-            self.lasttimestamp = entry.timestamp
-            self.frames.append(frame)
-            return
-        for i in range(entry.timestamp-self.lasttimestamp):
-            self.frames.append(frame) 
+        self.lasttimestamp = entry.timestamp
+        self.frames.append(frame)
         
         self.lasttimestamp = entry.timestamp
 
@@ -63,7 +55,6 @@ class GifMap(ZoneMap):
         dir, file = self.get_file_save_name()
         if not os.path.exists(dir):
             os.makedirs(dir)
-        print(self.frames)
         self.frames[0].save(dir + file, format='GIF', append_images=self.frames[1:], save_all=True, duration=self.framerate, loop=0)
         self.frames[-1].save(dir + self.get_static_save_name())
 
