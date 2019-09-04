@@ -7,7 +7,7 @@ Some maps are not included here. This is just laziness from my part since there 
 ## Usage
 
 ### Multipart gif
-bash makegif.sh <Log file> <Number of entries to map> <Number of entries per gif>
+bash makegif.sh \<Log file\> \<Number of entries to map\> \<Number of entries per gif\>
 
 I use 200 for the last parameter. Might be possible to go a bit higher though.
 
@@ -19,7 +19,7 @@ bash makegif.sh Tale.lua 2000 200
 ### All in one (SLOW!)
 python map.py <Log file> <number of first entry> <number of last entry> <count> <option>
 
-Log file is found under _classic_/WTF/<Account>/<Realm>/<Character>/SavedVariables/Tale.lua
+Log file is found under _classic_/WTF/\<Account\>/\<Realm\>/\<Character\>/SavedVariables/Tale.lua
 
 Second and third argument specify a range of mapped entries.
 
