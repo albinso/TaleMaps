@@ -15,11 +15,13 @@ class Entry:
         self.fill_extra_fields()
 
     def parse_entry(self, entry_string):
+        print(entry_string)
         entry = entry_string.split('"')[1]
         params = list(map(lambda x, y: x(y), self.funcs, entry.split(",")))
         return params
 
     def fill_fields(self):
+        print(self.entry)
         self.pos = self.entry[0], self.entry[1]
         self.mapID = self.entry[2]
         self.timestamp = self.entry[3]
@@ -41,7 +43,8 @@ def main():
     with open(fname, 'r') as f:
         for line in f.readlines():
             line = line.strip()
-            if line.startswith('"'):
+            print("Commas: " + line.count(","))
+            if line.startswith('"') and line.count(",") >= 4:
                 out.append(StdEntry(line))
     print(out[0].pos)
 

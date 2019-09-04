@@ -37,6 +37,8 @@ def makemap(log, suffix="", gif=False, lines=False):
     last = len(log)-1
     revlog = reversed(log)
     for j, entry in enumerate(log):
+        if entry == None or entry.mapID == -1:
+            continue
         if prevzone != entry.mapID:
             i = -1
         i += 1
@@ -46,7 +48,7 @@ def makemap(log, suffix="", gif=False, lines=False):
             else:
                 zones[entry.mapID] = ZoneMap(entry.mapID)
         
-        last_point = next((i for i in reversed(log) if i.mapID == entry.mapID))
+        last_point = next((i for i in reversed(log) if i != None and i.mapID == entry.mapID))
         last_frame = last_point.timestamp==entry.timestamp
         if gif:
             zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone, last_frame=last_frame)
@@ -65,7 +67,7 @@ def main():
     stringlog = extractLog(logfilename)
 
     batch = (int(sys.argv[2]), int(sys.argv[3]))
-    log = [StdEntry(e) for e in stringlog[batch[0]:batch[1]]]
+    log = [StdEntry(e) if e.count(",") >= 3 else None for e in stringlog[batch[0]:batch[1]]]
     if len(sys.argv) > 5 and sys.argv[5] == 'gif':
         makemap(log, suffix=sys.argv[4], gif=True) 
     else:

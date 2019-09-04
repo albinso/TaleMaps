@@ -55,7 +55,7 @@ class ZoneMap:
         ax = entry.pos[0] * self.img.width
         ay = entry.pos[1] * self.img.height
         font = ImageFont.truetype("/usr/share/fonts/TTF/VeraMoBd.ttf", 14)
-        fill, scale = self.get_params_by_event(entry.ID)
+        fill, outline, scale = self.get_params_by_event(entry.ID)
         dot = self.dotsize*math.sqrt(scale)
         self.imgdraw.text((ax+dot/2, ay+dot/2), text, fill=(0, 0, 0), font=font)
 
@@ -63,10 +63,10 @@ class ZoneMap:
         ax = entry.pos[0] * self.img.width
         ay = entry.pos[1] * self.img.height
         
-        fill, scale = self.get_params_by_event(entry.ID)
+        fill, outline, scale = self.get_params_by_event(entry.ID)
 
         
-        self.imgdraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=(0, 0, 255))
+        self.imgdraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=outline)
         if self.prev_point and draw_line:
             width = 2 
             if self.previd == 101:
