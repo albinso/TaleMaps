@@ -1,17 +1,25 @@
+import imageio
 from zonemap import ZoneMap
 from parse import Entry
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 import os
+import numpy as np
 
 class GifMap(ZoneMap):
    
-    def __init__(self, mapID, framerate=50, suffix=None):
+    def __init__(self, mapID, framerate=50, suffix=None, writer=None):
         self.framerate = framerate
+        self.zoneid = mapID
         self.frames = []
         self.suffix = suffix
         self.lasttimestamp = None
         super(GifMap, self).__init__(mapID) 
-
+        if writer == None:
+            path, name = self.get_file_save_name()
+            os.mkdir(path)
+            self.writer = imageio.get_writer(path + name, fps=20)
+        else:
+            self.writer = writer
     
     def add_point(self, entry, draw_line=False, last_frame=False):
         frame = self.img.copy()
@@ -21,14 +29,13 @@ class GifMap(ZoneMap):
             frameDraw = ImageDraw.ImageDraw(frame)
         else:
             frameDraw = self.imgdraw
-        fill, scale = self.get_params_by_event(entry.ID)
-        frameDraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=(0, 0, 255))
+        fill, outline, scale = self.get_params_by_event(entry.ID)
+        frameDraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=outline)
         if not last_frame:
             ZoneMap.drawCow(self, frame, (int(ax), int(ay)), entry.ID == 103)
         
         self.lasttimestamp = entry.timestamp
-        self.frames.append(frame)
-        
+        self.writer.append_data(np.array(frame))
         self.lasttimestamp = entry.timestamp
 
 
@@ -44,7 +51,7 @@ class GifMap(ZoneMap):
         return ZoneMap.get_file_name(self)
 
     def get_file_save_name(self):
-        return "maps/" + self.get_map_name() + "/", self.suffix + ".gif"
+        return "maps/" + self.get_map_name() + "/", self.suffix + ".mp4"
     
     def get_static_save_name(self, suffix=None):
         if not suffix:
@@ -52,11 +59,7 @@ class GifMap(ZoneMap):
         return suffix + ".png"
          
     def save(self):
-        dir, file = self.get_file_save_name()
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        self.frames[0].save(dir + file, format='GIF', append_images=self.frames[1:], save_all=True, duration=self.framerate, loop=0)
-        self.frames[-1].save(dir + self.get_static_save_name())
+        self.writer.close()
 
 if __name__ == '__main__':
     g = GifMap(1412)

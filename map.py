@@ -6,6 +6,7 @@ from entryids import ids as entryids, mapicons
 from parse import StdEntry
 from zonemap import ZoneMap
 from gifmap import GifMap
+import imageio
 
 
 
@@ -36,6 +37,8 @@ def makemap(log, suffix="", gif=False, lines=False):
     zones = {}
     last = len(log)-1
     revlog = reversed(log)
+    if gif:
+        writer = imageio.get_writer("singlevideo.mp4", fps=int(sys.argv[6]))
     for j, entry in enumerate(log):
         if entry == None or entry.mapID == -1:
             continue
@@ -44,7 +47,7 @@ def makemap(log, suffix="", gif=False, lines=False):
         i += 1
         if not entry.mapID in zones.keys():
             if gif:
-                zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix)
+                zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix, writer=writer)
             else:
                 zones[entry.mapID] = ZoneMap(entry.mapID)
         
