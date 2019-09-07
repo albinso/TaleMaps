@@ -14,6 +14,7 @@ class ZoneMap:
         self.previd = None
         self.dotsize = dotsize*self.img.width
         self.iconPath = "icons/tauren.png"
+        self.font = ImageFont.truetype("/usr/share/fonts/TTF/VeraMoBd.ttf", 14)
         self.load_icon()
     
     def load_icon(self):
@@ -54,10 +55,9 @@ class ZoneMap:
     def add_text(self, entry, text):
         ax = entry.pos[0] * self.img.width
         ay = entry.pos[1] * self.img.height
-        font = ImageFont.truetype("/usr/share/fonts/TTF/VeraMoBd.ttf", 14)
         fill, outline, scale = self.get_params_by_event(entry.ID)
         dot = self.dotsize*math.sqrt(scale)
-        self.imgdraw.text((ax+dot/2, ay+dot/2), text, fill=(0, 0, 0), font=font)
+        self.imgdraw.text((ax+dot/2, ay+dot/2), text, fill=(0, 0, 0), font=self.font)
 
     def add_point(self, entry, draw_line=True):
         ax = entry.pos[0] * self.img.width

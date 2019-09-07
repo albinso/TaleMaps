@@ -13,6 +13,7 @@ class GifMap(ZoneMap):
         self.frames = []
         self.suffix = suffix
         self.lasttimestamp = None
+        self.cornerfont = ImageFont.truetype("/usr/share/fonts/TTF/VeraMoBd.ttf", 35)
         super(GifMap, self).__init__(mapID) 
         if writer == None:
             path, name = self.get_file_save_name()
@@ -31,6 +32,10 @@ class GifMap(ZoneMap):
             frameDraw = self.imgdraw
         fill, outline, scale = self.get_params_by_event(entry.ID)
         frameDraw.ellipse(self.construct_ellipse(ax, ay, scale=scale), fill=fill, outline=outline)
+        tx = 0.9*self.img.width
+        ty = 0.9*self.img.height
+        frameDraw.rectangle([(tx, ty), (tx+40, ty+40)], fill=(0, 0, 0))
+        frameDraw.text((tx, ty), str(entry.level), fill=(255, 0, 0), font=self.cornerfont)
         if not last_frame:
             ZoneMap.drawCow(self, frame, (int(ax), int(ay)), entry.ID == 103)
         

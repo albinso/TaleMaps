@@ -30,15 +30,15 @@ def formatLog(log):
         out.append(entry)
     return out
 
-def makemap(log, suffix="", gif=False, lines=False):
+def makemap(log, suffix="", mp4=False, lines=False):
     std_resolution = 1
     prevzone = 0
     i = -1
     zones = {}
     last = len(log)-1
     revlog = reversed(log)
-    if gif:
-        writer = imageio.get_writer("singlevideo.mp4", fps=int(sys.argv[6]))
+    if mp4:
+        writer = imageio.get_writer(sys.argv[6], fps=int(sys.argv[5]))
     for j, entry in enumerate(log):
         if entry == None or entry.mapID == -1:
             continue
@@ -46,15 +46,15 @@ def makemap(log, suffix="", gif=False, lines=False):
             i = -1
         i += 1
         if not entry.mapID in zones.keys():
-            if gif:
+            if mp4:
                 zones[entry.mapID] = GifMap(entry.mapID, suffix=suffix, writer=writer)
             else:
                 zones[entry.mapID] = ZoneMap(entry.mapID)
         
         last_point = next((i for i in reversed(log) if i != None and i.mapID == entry.mapID))
         last_frame = last_point.timestamp==entry.timestamp
-        if gif:
-            zones[entry.mapID].add_point(entry, draw_line=entry.mapID == prevzone, last_frame=last_frame)
+        if mp4:
+            zones[entry.mapID].add_point(entry, draw_line=False, last_frame=last_frame)
         else:
             zones[entry.mapID].add_point(entry, draw_line=(entry.mapID == prevzone and lines))
         if entry.ID == 301:
@@ -71,11 +71,11 @@ def main():
 
     batch = (int(sys.argv[2]), int(sys.argv[3]))
     log = [StdEntry(e) if e.count(",") >= 3 else None for e in stringlog[batch[0]:batch[1]]]
-    if len(sys.argv) > 5 and sys.argv[5] == 'gif':
-        makemap(log, suffix=sys.argv[4], gif=True) 
+    if len(sys.argv) > 4 and sys.argv[4] == 'mp4':
+        makemap(log, mp4=True) 
     else:
-        lines = len(sys.argv) > 5 and sys.argv[5] == 'lines'
-        makemap(log, suffix=sys.argv[4], gif=False, lines=lines) 
+        lines = len(sys.argv) > 4 and sys.argv[4] == 'lines'
+        makemap(log, mp4=False, lines=lines) 
     
     
 
