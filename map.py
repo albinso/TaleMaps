@@ -14,7 +14,7 @@ import imageio
 
 def extractLog(fname):
     out = []
-    with open(fname, 'r') as f:
+    with open(fname, 'r', errors='replace') as f:
         for line in f.readlines():
             line = line.strip()
             if line.startswith('"'):

@@ -4,6 +4,8 @@ from mappings import mapIDs
 from PIL import Image, ImageDraw, ImageColor, ImageFont
 from entryids import ids as entryids, mapicons
 from parse import StdEntry
+import os
+import errno
 
 class ZoneMap:
 
@@ -24,7 +26,7 @@ class ZoneMap:
         return mapIDs[self.zoneid]
 
     def get_file_name(self):
-        return "maps/" + self.get_map_name() + ".jpg"
+        return "orgmaps/" + self.get_map_name() + ".jpg"
 
     def get_file_save_name(self):
         return "maps/" + self.get_map_name() + ".png"
@@ -79,6 +81,13 @@ class ZoneMap:
         self.previd = entry.ID
     
     def save(self):
-        self.img.save(self.get_file_save_name())
+        path = self.get_file_save_name()
+        if not os.path.exists(os.path.dirname(path)):
+            try:
+                os.makedirs(os.path.dirname(path))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+        self.img.save(path)
 
 
